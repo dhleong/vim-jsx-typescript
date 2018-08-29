@@ -22,6 +22,7 @@ if exists('b:current_syntax')
 endif
 
 syn include @HTMLSyntax syntax/html.vim
+syn include syntax/jsx.vim
 if exists('s:current_syntax')
   let b:current_syntax = s:current_syntax
 endif

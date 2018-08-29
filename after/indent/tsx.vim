@@ -115,8 +115,8 @@ fu! GetTsxIndent(lnum)
     " not enough indent after fragment start
     " and on fragment end
     let ind = ind + &sw
-  elseif getline(a:lnum - 1) =~? '^\s*</>'
-    " too much after fragment end
+  elseif getline(a:lnum) =~? '\s*)' && SynXMLish(prevsyn)
+    " ending a JSX block; de-indent some
     let ind = ind - &sw
   endif
 

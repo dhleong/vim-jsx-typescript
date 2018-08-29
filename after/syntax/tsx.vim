@@ -2,7 +2,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim syntax file
 "
-" Language: JSX (JavaScript)
+" Language: TSX (Typescript)
 " https://github.com/neoclide/vim-jsx-improve/blob/master/after/syntax/javascript.vim
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -181,7 +181,7 @@ syn keyword ReactLifeCycleMethods componentWillMount shouldComponentUpdate compo
 hi ReactLifeCycleMethods ctermfg=204 guifg=#D19A66
 
 
-let b:current_syntax = 'javascript.jsx'
+let b:current_syntax = 'typescript.tsx'
 
 let &cpo = s:jsx_cpo
 unlet s:jsx_cpo

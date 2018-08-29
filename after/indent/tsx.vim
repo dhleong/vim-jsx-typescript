@@ -6,7 +6,8 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Save the current JavaScript indentexpr.
-let b:jsx_js_indentexpr = &indentexpr
+" If it uses v:lnum, instead use a:lnum (which we provide)
+let b:jsx_js_indentexpr = substitute(&indentexpr, 'v:lnum', 'a:lnum', '')
 
 " Prologue; load in XML indentation.
 if exists('b:did_indent')
@@ -18,7 +19,7 @@ if exists('s:did_indent')
   let b:did_indent=s:did_indent
 endif
 
-setlocal indentexpr=GetJsxIndent()
+setlocal indentexpr=GetTsxIndent(v:lnum)
 
 " JS indentkeys
 setlocal indentkeys=0{,0},0),0],0\,,!^F,o,O,e
@@ -78,9 +79,9 @@ fu! SynJSXContinues(cursyn, prevsyn)
 endfu
 
 " Cleverly mix JS and XML indentation.
-fu! GetJsxIndent()
-  let cursyn  = SynSOL(v:lnum)
-  let prevsyn = SynEOL(v:lnum - 1)
+fu! GetTsxIndent(lnum)
+  let cursyn  = SynSOL(a:lnum)
+  let prevsyn = SynEOL(a:lnum - 1)
 
   " Use XML indenting iff:
   "   - the syntax at the end of the previous line was either JSX or was the
@@ -88,15 +89,15 @@ fu! GetJsxIndent()
   "   - the current line continues the same jsxRegion as the previous line.
   if (SynXMLish(prevsyn) || SynJSXBlockEnd(prevsyn)) &&
         \ SynJSXContinues(cursyn, prevsyn)
-    let ind = XmlIndentGet(v:lnum, 0)
+    let ind = XmlIndentGet(a:lnum, 0)
 
     " Align '/>' and '>' with '<' for multiline tags.
-    if getline(v:lnum) =~? s:endtag
+    if getline(a:lnum) =~? s:endtag
       let ind = ind - &sw
     endif
 
     " Then correct the indentation of any JSX following '/>' or '>'.
-    if getline(v:lnum - 1) =~? s:endtag
+    if getline(a:lnum - 1) =~? s:endtag
       let ind = ind + &sw
     endif
   else
@@ -105,8 +106,18 @@ fu! GetJsxIndent()
       " e.g., this will be GetJavascriptIndent().)
       let ind = eval(b:jsx_js_indentexpr)
     else
-      let ind = cindent(v:lnum)
+      let ind = cindent(a:lnum)
     endif
+  endif
+
+  " this assumes vim-js-indent and is probably not generally correct
+  if getline(a:lnum - 1) =~? '^\s*<>' || getline(a:lnum) =~? '^\s*</>'
+    " not enough indent after fragment start
+    " and on fragment end
+    let ind = ind + &sw
+  elseif getline(a:lnum - 1) =~? '^\s*</>'
+    " too much after fragment end
+    let ind = ind - &sw
   endif
 
   return ind

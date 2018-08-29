@@ -78,6 +78,15 @@ syntax match jsxCloseString
     \ +\w\++
     \ contained
 
+" <>
+" ~~
+syntax match jsxFragmentStart +<>+
+" syntax match jsxRegion +<>+
+
+" </>
+" ~~~
+syntax match jsxCloseTag +</>+
+
 " <!-- -->
 " ~~~~~~~~
 syntax match jsxComment /<!--\_.\{-}-->/ display
@@ -136,6 +145,8 @@ syntax cluster jsExpression add=jsxRegion
 highlight def link jsxTagName xmlTagName
 " highlight def link jsxCloseTag htmlTag
 highlight def link jsxCloseTag xmlEndTag
+
+highlight def link jsxFragmentStart xmlEndTag
 
 highlight def link jsxEqual htmlTag
 highlight def link jsxString String
